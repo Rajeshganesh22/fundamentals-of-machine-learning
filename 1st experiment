@@ -1,0 +1,36 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load the CSV file
+df = pd.read_csv('rajeshganeshh.csv1.csv')
+
+# Clean column names
+df.columns = df.columns.str.strip()
+
+# Remove commas from the price column (e.g. '109,000' -> '109000')
+df['Approx. Price (USD)'] = df['Approx. Price (USD)'].astype(str).str.replace(',', '')
+
+# Convert columns to numeric, coercing errors to NaN
+df['Approx. Price (USD)'] = pd.to_numeric(df['Approx. Price (USD)'], errors='coerce')
+df['Year of Production'] = pd.to_numeric(df['Year of Production'], errors='coerce')
+
+# Drop rows with NaN values in these columns
+df = df.dropna(subset=['Approx. Price (USD)', 'Year of Production'])
+
+# Sort data by Year
+df = df.sort_values('Year of Production')
+
+# Plotting
+plt.figure(figsize=(12,6))
+plt.plot(df['Year of Production'], df['Approx. Price (USD)'], marker='o')
+
+# Add labels above points
+for i, row in df.iterrows():
+    plt.text(row['Year of Production'], row['Approx. Price (USD)'] + 3000, row['Car Model'], rotation=45, fontsize=9)
+
+plt.title('EV Approximate Price Trend by Year of Production')
+plt.xlabel('Year of Production')
+plt.ylabel('Approximate Price (USD)')
+plt.grid(True)
+plt.tight_layout()
+plt.show()
